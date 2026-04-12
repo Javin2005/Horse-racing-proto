@@ -1,0 +1,120 @@
+
+<style>
+.phase-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s; }
+.phase-card:hover { border-color: var(--color-border-primary); }
+.phase-card.active { border-color: var(--color-border-info); border-width: 1.5px; }
+.phase-header { display: flex; align-items: center; gap: 10px; }
+.phase-badge { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); }
+.phase-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.phase-detail { margin-top: 12px; border-top: 0.5px solid var(--color-border-tertiary); padding-top: 12px; display: none; }
+.phase-card.active .phase-detail { display: block; }
+.task { display: flex; gap: 8px; margin-bottom: 8px; align-items: flex-start; font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; }
+.task-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.concept { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 8px 12px; font-size: 12px; color: var(--color-text-secondary); margin-top: 8px; }
+.concept strong { color: var(--color-text-primary); font-weight: 500; }
+.ask-btn { margin-top: 10px; font-size: 12px; color: var(--color-text-info); background: none; border: 0.5px solid var(--color-border-info); border-radius: var(--border-radius-md); padding: 5px 12px; cursor: pointer; }
+.ask-btn:hover { background: var(--color-background-info); }
+.connector { width: 1px; height: 16px; background: var(--color-border-tertiary); margin: 0 auto 0 24px; }
+</style>
+
+<h2 class="sr-only">Horse racing game development roadmap — 5 phases from basic Python to online multiplayer</h2>
+
+<div style="padding: 1rem 0;">
+  <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 16px;">Click any phase to expand it. Each phase builds on the last.</p>
+
+  <div class="phase-card active" onclick="toggle(this)">
+    <div class="phase-header">
+      <span class="phase-badge" style="background: var(--color-background-info); color: var(--color-text-info);">Phase 1</span>
+      <span class="phase-title">The Horse & the Race</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--color-text-tertiary)">~1–2 weeks</span>
+    </div>
+    <div class="phase-detail">
+      <div class="task"><span class="task-dot" style="background:var(--color-text-info)"></span>Define the <code>Horse</code> class with randomised stats (speed, stamina, spirit, mud affinity)</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-info)"></span>Write a <code>simulate_race()</code> function that takes a list of horses and returns a finishing order</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-info)"></span>Make the race work in segments: start burst → mid race → final stretch</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-info)"></span>Print a play-by-play commentary to the terminal</div>
+      <div class="concept"><strong>Python concepts you'll revisit:</strong> classes, <code>__init__</code>, instance variables, <code>random</code> module, lists, <code>for</code> loops, f-strings</div>
+      <button class="ask-btn" onclick="event.stopPropagation();sendPrompt('Show me how to write the Horse class and simulate_race() function for Phase 1 of the horse game')">Show me the code for Phase 1 ↗</button>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <div class="phase-card" onclick="toggle(this)">
+    <div class="phase-header">
+      <span class="phase-badge" style="background: var(--color-background-success); color: var(--color-text-success);">Phase 2</span>
+      <span class="phase-title">The Stable & Money</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--color-text-tertiary)">~1–2 weeks</span>
+    </div>
+    <div class="phase-detail">
+      <div class="task"><span class="task-dot" style="background:var(--color-text-success)"></span>Create a <code>Player</code> class with a wallet and a list of owned horses</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-success)"></span>Add a <code>buy_horse()</code> method and a simple horse market</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-success)"></span>Implement hay types (cheap / standard / premium) and a <code>feed()</code> method that adjusts horse stats</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-success)"></span>Add prize money for finishing positions after each race</div>
+      <div class="concept"><strong>Python concepts:</strong> class composition (Player <em>has</em> Horses), dictionaries for inventory, methods that modify state</div>
+      <button class="ask-btn" onclick="event.stopPropagation();sendPrompt('Show me how to write the Player class and hay/feeding system for Phase 2 of the horse game')">Show me the code for Phase 2 ↗</button>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <div class="phase-card" onclick="toggle(this)">
+    <div class="phase-header">
+      <span class="phase-badge" style="background: var(--color-background-warning); color: var(--color-text-warning);">Phase 3</span>
+      <span class="phase-title">Doping & Risk</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--color-text-tertiary)">~1 week</span>
+    </div>
+    <div class="phase-detail">
+      <div class="task"><span class="task-dot" style="background:var(--color-text-warning)"></span>Add <code>is_doped</code> flag to Horse — gives a speed multiplier during race</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-warning)"></span>After each race: random drug test (e.g. 20% chance of being caught)</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-warning)"></span>If caught: horse is banned, prize money forfeited, possible fine</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-warning)"></span>Add a "corrupt vet" option — costs money but lowers detection chance</div>
+      <div class="concept"><strong>Python concepts:</strong> <code>random.randint()</code> for probability, boolean flags, conditional logic, raising exceptions for bans</div>
+      <button class="ask-btn" onclick="event.stopPropagation();sendPrompt('Show me how to implement the doping system and drug test for Phase 3 of the horse game')">Show me the code for Phase 3 ↗</button>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <div class="phase-card" onclick="toggle(this)">
+    <div class="phase-header">
+      <span class="phase-badge" style="background: var(--color-background-danger); color: var(--color-text-danger);">Phase 4</span>
+      <span class="phase-title">Game Loop & Save System</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--color-text-tertiary)">~1–2 weeks</span>
+    </div>
+    <div class="phase-detail">
+      <div class="task"><span class="task-dot" style="background:var(--color-text-danger)"></span>Build a main game loop: each "turn" is a race week — feed, choose race, see results</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-danger)"></span>Add a proper text menu (stable / shop / race / quit)</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-danger)"></span>Save and load game state using <code>json</code> — so you can quit and come back</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-danger)"></span>Add horse ageing — stats degrade over time, eventually retire them</div>
+      <div class="concept"><strong>Python concepts:</strong> <code>while</code> loops, <code>json</code> module, file I/O (<code>open()</code>, <code>read()</code>, <code>write()</code>), <code>__dict__</code> for serialisation</div>
+      <button class="ask-btn" onclick="event.stopPropagation();sendPrompt('Show me how to build the main game loop and JSON save system for Phase 4 of the horse game')">Show me the code for Phase 4 ↗</button>
+    </div>
+  </div>
+
+  <div class="connector"></div>
+
+  <div class="phase-card" onclick="toggle(this)">
+    <div class="phase-header">
+      <span class="phase-badge" style="background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-secondary);">Phase 5</span>
+      <span class="phase-title">Multiplayer (LAN / Online)</span>
+      <span style="margin-left:auto;font-size:12px;color:var(--color-text-tertiary)">future</span>
+    </div>
+    <div class="phase-detail">
+      <div class="task"><span class="task-dot" style="background:var(--color-text-secondary)"></span>Start with "async" multiplayer — everyone exports their horse stats to a shared file or server</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-secondary)"></span>A race server collects all entries, simulates the race, sends back results</div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-secondary)"></span>For real-time LAN play: use Python's <code>socket</code> library or <code>Flask-SocketIO</code></div>
+      <div class="task"><span class="task-dot" style="background:var(--color-text-secondary)"></span>Consider migrating to Unity (C#) at this point for easier networking and graphics</div>
+      <div class="concept"><strong>Python concepts:</strong> networking, sockets, JSON over the wire, client/server architecture — tackle after Phases 1–4 are solid</div>
+      <button class="ask-btn" onclick="event.stopPropagation();sendPrompt('Explain how multiplayer would work for the horse game in Phase 5')">Tell me about Phase 5 ↗</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggle(el) {
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.phase-card').forEach(c => c.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+</script>
