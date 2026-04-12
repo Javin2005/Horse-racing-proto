@@ -1,4 +1,4 @@
-from Horse import Horse
+from horse import Horse
 
 def simulate_race(Horses, track_condition="Dry"):
     print(f"\n RACE START | Track: {track_condition}\n")
