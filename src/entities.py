@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import random
 import json
 from dataclasses import dataclass, field
@@ -11,7 +12,7 @@ class NameGenerator:
     PREFIXES = [
         "Storm", "Thunder", "Silver", "Dark", "Golden", "Iron", "Wild",
         "Shadow", "Swift", "Blaze", "Royal", "Steel", "Night", "Star",
-        "Frost", "Norse", "Viking", "Mjölnir", "Odin", "Freya", "Saga", "Cold", "Cash",
+        "Frost", "Norse", "Viking", "Mjolnir", "Odin", "Freya", "Saga", "Cold", "Cash",
     ]
 
     SUFFIXES = [
@@ -63,17 +64,17 @@ class NameGenerator:
 
 
 class Horse:
-    def __init__(self, name):
+    def __init__(self, name: str, age: int = None):
         self.name = name
 
-        self.age = age or random.randint(2,4)
+        self.age = age if age is not None else random.randint(2,4) 
 
 
         self.speed = round(random.uniform(4.0,9.0),2)
         self.stamina = round(random.uniform(4.0,9.0),2)
         self.acceleration = round(random.uniform(3.0,9.0),2)
 
-        self.weight = round(rando.uniform(450,600),1)
+        self.weight = round(random.uniform(450,600),1)
 
         self.experience = 0
 
@@ -87,8 +88,8 @@ class Horse:
 
         self.gate_start = round(random.uniform(0.7, 1.3), 2)
 
-        #gömda stats som man ska räkna ut över tid.
-        self._potential = round(ranadom.uniform(6.0,10.0), 2)
+        #gomda stats som man ska rakna ut over tid.
+        self._potential = round(random.uniform(6.0,10.0), 2)
         self._learning_rate = round(random.uniform(0.05,0.25), 2)
         self._injury_proneness = round(random.uniform(0.02, 0.20), 2)
         self._doping_sensitivity = round(random.uniform(0.5, 1.8), 2)
@@ -106,7 +107,7 @@ class Horse:
         self.morale = 75.0
         self.drug_level = 0.0 
 
-        #status på hästen
+        #status pa hasten
         self.health = 100      
         self.is_doped = False
         self.is_banned = False
@@ -318,7 +319,7 @@ class Jockey:
 
         #Stats that we can see
         self.pacing = round(random.uniform(lo, hi), 2)
-        self.aggresion = round(random.uniform(lo, hi), 2)
+        self.aggression = round(random.uniform(lo, hi), 2)
         self.stability = round(random.uniform(lo, hi), 2)
 
 
@@ -359,7 +360,7 @@ class Jockey:
         """
         Called after every race together. Synergy grows faster early.
         """
-        current = self.get_synergy(self, horse_name)
+        current = self.get_synergy(horse_name)
         growth = 0.04 * (1.5 - current)
         self._synergy[horse_name] = round(min(1.5, current + growth), 3)
 
@@ -371,7 +372,7 @@ class Jockey:
 
         jockey_skill = (
             self.pacing * 0.40 +
-            self.aggresion * 0.35 +
+            self.aggression * 0.35 +
             self.stability * 0.25
         )/10.0
 
@@ -411,7 +412,7 @@ class Handler:
     """
 
     SPECIALISATIONS = [
-        "Trainer",     # Ökad stat growth
+        "Trainer",     # okad stat growth
         "Vet",         # injury
         "Nutritionist", # feed efficiency
         "Psychologist", # focus
@@ -458,7 +459,7 @@ class Handler:
         
         return effects
 
-    def consider_blackmail(self, palyer_gold: int) -> Optional[dict]:
+    def consider_blackmail(self, payler_gold: int) -> Optional[dict]:
         """
         If Handler has a low integrity and knows about doping, they may blackmail the player
         """
@@ -489,7 +490,7 @@ class Handler:
         Low_integrity handlers may steal
         """
 
-        steal_chance = (1.0 - self.integrity) * 0.1
+        steal_chance = (1.0 - self_integrity) * 0.1
         if random.random() > steal_chance or not farm_inventory:
             return None
 
@@ -663,7 +664,7 @@ class Player:
         for (lo, hi), label in self.REPUTATION_TIERS.items():
             if lo <= self.reputation < hi:
                 return label
-            return "Legendary"
+        return "Legendary"
 
     @property
     def all_horses(self) -> list:
@@ -739,7 +740,7 @@ class Player:
                     (h for h in self.all_handlers if h.name == event["handler"]), None
                 )
                 if handler and random.random() < 0.30:
-                    handler_integrity -= 0.05
+                    handler._integrity -= 0.05
             else:
                 pay = False
         if not pay:
@@ -770,7 +771,7 @@ class Player:
         for farm in self.farms:
             farm.feed_horses()
             events = farm.weekly_handler_actions(self)
-            all_events.extend(self)
+            all_events.extend(events)
 
         for horse in self.all_horses:
             horse.drug_level = max(0, horse.drug_level - 10)
@@ -787,13 +788,13 @@ class Player:
         """
 
         return {
-            "name":           self.name,
-            "gold":           self.gold,
-            "reputation":     self.reputation,
-            "week":           self.week,
+            "name": self.name,
+            "gold": self.gold,
+            "reputation": self.reputation,
+            "week": self.week,
             "doping_warnings": self.doping_warnings,
-            "is_banned":      self.is_banned,
-            #måste ändra implmentation så att den recursive fungerar föra farm,jockeys etc
+            "is_banned": self.is_banned,
+            #maste andra implmentation sa att den recursive fungerar fora farm,jockeys etc
         }
 
     
