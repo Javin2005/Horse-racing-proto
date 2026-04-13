@@ -713,6 +713,28 @@ class Player:
             self.jockeys.append(jockey)
             return True
         return False
+
+    def buy_horse(self, farm_index: int, cost: int) -> bool:
+        target_farm = self.farms[farm_index]
+
+        
+        if farm_index >= len(self.farms):
+            print(f"  No farm at index {farm_index}.")
+            return False
+
+        if target_farm.is_full:
+            print(f"  {target_farm.name} is full, buy a bigger farm first!")
+            return False
+
+        horse_name = NameGenerator.random_name()
+
+        if self.spend(cost, f"buying {horse_name}"):
+            new_horse = Horse(horse_name)
+            target_farm.add_horse(new_horse)  
+            print(new_horse)                  
+            return True
+
+        return False
     
     def adjust_reputation(self, delta: int, reason: str = ""):
         old_tier = self.reputation_tier

@@ -1,7 +1,7 @@
-from entities import Player, Jockey, Handler, NameGenerator
+from entities import Player, Jockey, Handler, NameGenerator, Horse
 
 # Create a player
-player = Player("Erik Svensson", starting_gold=15_000)
+player = Player("Erik Svensson", starting_gold=150_000)
 print(player)
 print()
 
@@ -9,6 +9,7 @@ print()
 farm = player.farms[0]
 print(farm)
 print()
+
 
 # Hire a handler
 handler = Handler("Björn Larsson", specialisation="Trainer")
@@ -32,6 +33,19 @@ player.hire_jockey(jockey)
 print(f"Signed jockey: {jockey}")
 print()
 
+# Buy 4 horses
+for i in range(4):
+    player.buy_horse(farm_index=0, cost=1500)
+    print()
+
+# Print a report for each one
+horses = player.all_horses
+for horse in horses:
+    print(horse.trainer_report("expert"))
+    print()  
+    
+    
+
 # Run a week
 print("--- End of Week 1 ---")
 events = player.end_of_week()
@@ -39,3 +53,10 @@ for event in events:
     print(f"\n  EVENT: {event.get('message', event)}")
 
 print(f"\n{player}")
+
+#run 10 weeks
+print("--- 3 Weeks later ---")
+for i in range (3):
+    events = player.end_of_week()
+    for event in events:
+        print(f"\n EVENT: {event.get("message", event)}")
