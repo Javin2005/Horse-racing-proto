@@ -490,7 +490,7 @@ class Handler:
         Low_integrity handlers may steal
         """
 
-        steal_chance = (1.0 - self_integrity) * 0.1
+        steal_chance = (1.0 - self._integrity) * 0.1
         if random.random() > steal_chance or not farm_inventory:
             return None
 

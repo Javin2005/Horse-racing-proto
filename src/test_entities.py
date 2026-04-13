@@ -1,5 +1,3 @@
-# test_entities.py  — run this to see everything working together
-
 from entities import Player, Jockey, Handler, NameGenerator
 
 # Create a player
