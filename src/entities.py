@@ -633,10 +633,10 @@ class Player:
       - Raised by clean wins and charitable donations
     """
     REPUTATION_TIERS = {
-        (0,  20):  "Disgraced",
-        (20, 40):  "Unknown",
-        (40, 60):  "Established",
-        (60, 80):  "Respected",
+        (0,  20): "Disgraced",
+        (20, 40): "Unknown",
+        (40, 60): "Established",
+        (60, 80): "Respected",
         (80, 100): "Legendary",
     }
 
@@ -657,6 +657,158 @@ class Player:
 
         self.is_banned = False
         self.doping_warnings = 0
+    
+    @property
+    def reputation_tier(self) -> str:
+        for (lo, hi), label in self.REPUTATION_TIERS.items():
+            if lo <= self.reputation < hi:
+                return label
+            return "Legendary"
+
+    @property
+    def all_horses(self) -> list:
+        """Flatten all horses across all farms into one list."""
+        return [horse for farm in self.farms for horse in farm.horses]
+    @property
+    def all_handlers(self) -> list:
+        return [h for farm in self.farms for h in farm.handlers]
+    @property
+    def weekly_expenses(self) -> int:
+        return sum(farm.total_weekly_cost for farm in self.farms)
+
+    def spend(self, amount: int, description: str = "") -> bool:
+        """
+        Returns False if the player can't afford it.
+        Route all spending actions throught this method for logging
+        """
+
+        if amount > self.gold:
+            print(f"  Can't afford {description}! (need {amount:,}g, have {self.gold:,}g)")
+            return False
+        self.gold -= amount
+
+        if description:
+            print(f" Spent {amount:,}g on {description}. Remaining: {self.gold:,}g")
+        return True
+
+    def earn(self, amount: int, source: str = ""):
+        """
+        Route all earing action through this method for logging
+        """
+        self.gold += amount
+        if source:
+            print(f"  Earned {amount:,}g from {source}. Total: {self.gold:,}g")
+        
+    def buy_farm(self, name: str, capacity: int, cost: int) -> bool:
+        if self.spend(cost, f"new farm '{name}'"):
+            self.farms.append(Farm(name, capacity))
+            return True
+        return False
+
+    def hire_jockey(self, jockey: Jockey) -> bool:
+        if self.spend(jockey.race_fee * 4, f"signing {jockey.name}"):
+            jockey.contract_farm = self.farms[0].name if self.farms else None
+            jockey.is_freelance = False
+            self.jockeys.append(jockey)
+            return True
+        return False
+    
+    def adjust_reputation(self, delta: int, reason: str = ""):
+        old_tier = self.reputation_tier
+        self.reputation = max(0, min(100, self.reputation + delta))
+        new_tier = self.reputation_tier
+
+        if old_tier != new_tier:
+            direction = "rose to" if delta > 0 else "fell to"
+            print(f"  Reputation {direction} '{new_tier}'!")
+        
+        if reason:
+            self.known_events.append(f"Week {self.week}: {reason} ({delta:+}rep)")
+    
+    def respond_to_blackmail(self, event: dict, pay: bool):
+        """
+        Player can pay or refuse blackmail.
+        Refusing risks a public scandal (reputation hit, possible ban).
+        """
+
+        if pay:
+            if self.spend(event["demand"], f"blackmail payment to {event['handler']}"):
+                self.known_events.append(f"Paid {event['handler']} to stay quiet.")
+
+                handler = next(
+                    (h for h in self.all_handlers if h.name == event["handler"]), None
+                )
+                if handler and random.random() < 0.30:
+                    handler_integrity -= 0.05
+            else:
+                pay = False
+        if not pay:
+            scandal_severity = random.randint(10, 35)
+            self.adjust_reputation(-scandal_severity, f"doping scandal involving {event['horse']}")
+            self.doping_warnings += 1
+            if self.doping_warnings >= 3:
+                self.is_banned = True
+                print(f"\n  *** {self.name} has been BANNED from racing for corruption! ***\n")
+        
+    
+    def end_of_week(self) -> list:
+        """
+        Called once per game week by main.py.
+        Processes all farm upkeep, handler actions, and returns any events.
+          1. Deduct expenses
+          2. Feed horses (player chooses hay quality)
+          3. Each handler does their job (and maybe causes drama)
+          4. Horses age/recover/fatigue
+        """
+        all_events = []
+
+        if not self.spend(self.weekly_expenses, "weekly farm upkeep"):
+            print("  WARNING: Can't cover expenses! Staff morale dropping.")
+            for h in self.all_handlers:
+                h._integrity -= 0.03
+        
+        for farm in self.farms:
+            farm.feed_horses()
+            events = farm.weekly_handler_actions(self)
+            all_events.extend(self)
+
+        for horse in self.all_horses:
+            horse.drug_level = max(0, horse.drug_level - 10)
+            horse.fatigue = max(0, horse.fatigue - 8)
+        
+        self.week += 1
+        return all_events
+    
+
+    def to_dict(self) -> dict:
+        """
+        Converts the player to a plain Python dictionary. We have to do this since json.dump() does not 
+        accept custom objects. Will change later when the game starts having graphics
+        """
+
+        return {
+            "name":           self.name,
+            "gold":           self.gold,
+            "reputation":     self.reputation,
+            "week":           self.week,
+            "doping_warnings": self.doping_warnings,
+            "is_banned":      self.is_banned,
+            #måste ändra implmentation så att den recursive fungerar föra farm,jockeys etc
+        }
+
+    
+    def save(self, filepath: str = "savegame.json"):
+        with open(filepath, "w") as f:
+            json.dump(self.to_dict(), f, indent=2)
+        print(f"  Game saved to {filepath}.")
+    
+    def __repr__(self) -> str:
+        farms_summary = ", ".join(f.name for f in self.farms)
+        return (
+            f"Player('{self.name}' | {self.gold:,}g | "
+            f"rep={self.reputation} [{self.reputation_tier}] | "
+            f"week={self.week} | farms=[{farms_summary}])"
+        )
 
 
 
