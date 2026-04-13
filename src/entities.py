@@ -622,7 +622,6 @@ class Farm:
         return (f"Farm('{self.name}' | {len(self.horses)}/{self.capacity} horses | "
                 f"{len(self.handlers)} staff | upkeep={self.total_weekly_cost}g/wk)")
 
-
 class Player:
     """
     The Player owns farms (which contain horses and handlers),
@@ -642,7 +641,25 @@ class Player:
     }
 
     def __init__(self, name: str, starting_gold: int = 15_000):
-        
+
+        self.name = name
+        self.gold= starting_gold
+        self.reputation = 40
+        self.week = 1
+
+
+        self.farms: list[Farm] = [Farm(f"{name}'s Stable", capacity=4)]
+        self.jockeys: list[Jockey] = []
+
+        self.race_history: list[dict] = []
+        self.active_blackmails: list[dict] = []
+        self.known_events: list[str] = []
+
+        self.is_banned = False
+        self.doping_warnings = 0
+
+
+
 
 
 
